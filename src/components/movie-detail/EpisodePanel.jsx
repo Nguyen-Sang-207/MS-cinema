@@ -9,16 +9,15 @@ export default function EpisodePanel({ serverData, currentEpisode, onSelect }) {
     // Fixed: Math.floor needs single division expression
     const initialRange = Math.floor(Math.max(0, currentIdx) / CHUNK) * CHUNK;
     const [rangeStart, setRangeStart] = useState(initialRange);
+    const [lastEpName, setLastEpName] = useState(currentEpisode?.name);
+
+    if (currentEpisode?.name !== lastEpName) {
+        setLastEpName(currentEpisode?.name);
+        setRangeStart(Math.floor(Math.max(0, currentIdx) / CHUNK) * CHUNK);
+    }
 
     const totalChunks = Math.ceil(serverData.length / CHUNK);
     const visibleEps = serverData.slice(rangeStart, rangeStart + CHUNK);
-
-    // Auto-switch tab when current episode changes
-    useEffect(() => {
-        if (currentIdx >= 0) {
-            setRangeStart(Math.floor(currentIdx / CHUNK) * CHUNK);
-        }
-    }, [currentEpisode, currentIdx]);
 
     return (
         <div className="flex flex-col gap-3">

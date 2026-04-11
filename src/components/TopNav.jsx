@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Search, Bell, ChevronDown, Loader2, User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { searchMovies, getCategories, getCountries } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -133,7 +134,10 @@ export default function TopNav() {
     ];
 
     useEffect(() => {
-        getCategories().then(d => setCategories(d?.data?.items || d?.items || []));
+        getCategories().then(d => {
+            const raw = d?.data?.items || d?.items || [];
+            setCategories(raw.filter(cat => !cat.name.includes('18+')));
+        });
         getCountries().then(d => setCountries(d?.data?.items || d?.items || []));
     }, []);
 
@@ -259,7 +263,7 @@ export default function TopNav() {
                                 onSubmit={handleSearch}
                                 className="absolute right-0 flex items-center bg-surface-container-low border border-white/10 rounded-full h-10 pr-10 overflow-hidden"
                                 initial={{ width: 40, opacity: 0 }}
-                                animate={{ width: window.innerWidth < 768 ? 200 : 280, opacity: 1 }}
+                                animate={{ width: typeof window !== 'undefined' && window.innerWidth < 768 ? 200 : 280, opacity: 1 }}
                                 exit={{ width: 40, opacity: 0 }}
                                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                             >
@@ -316,12 +320,13 @@ export default function TopNav() {
                                                 onClick={() => { setShowSuggestions(false); setIsSearchOpen(false); setKeyword(''); }}
                                                 className="flex items-center gap-3 p-3 hover:bg-white/8 transition-colors border-b border-white/5 last:border-0"
                                             >
-                                                <img
+                                                <Image
                                                 src={`https://i0.wp.com/${getImgUrl(movie.thumb_url).replace(/^https?:\/\//, '')}?resize=96,64&quality=60`}
                                                 className="w-12 h-8 object-cover rounded-md flex-none bg-surface-container-high"
                                                 alt={movie.name}
-                                                referrerPolicy="no-referrer"
-                                                loading="lazy"
+                                                width={48}
+                                                height={32}
+                                                unoptimized
                                             />
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-white font-semibold text-sm truncate">{movie.name}</p>
@@ -345,7 +350,7 @@ export default function TopNav() {
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#3b82f6] flex items-center justify-center font-bold text-white border border-transparent group-hover:border-white/30 transition-all shadow-md">
                         {currentUser ? (
                             currentUser.photoURL && !currentUser.photoURL.includes('ui-avatars.com') ? (
-                                <img src={currentUser.photoURL} alt="User" className="w-full h-full rounded-full object-cover" />
+                                <Image src={currentUser.photoURL} alt="User" className="w-full h-full rounded-full object-cover" width={40} height={40} unoptimized />
                             ) : (
                                 currentUser.displayName ? currentUser.displayName.charAt(0).toUpperCase() : 'U'
                             )

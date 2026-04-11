@@ -14,7 +14,7 @@ export default function BottomNav() {
         }`;
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-lg border-t border-surface-container-high z-50 flex items-center justify-around px-2 pb-safe">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] bg-surface-container-lowest/95 backdrop-blur-lg border-t border-surface-container-high z-50 flex items-center justify-around px-2">
             <Link href="/" className={linkClass(path === '/')}>
                 <Home className="w-5 h-5" />
                 <span className="text-[10px] font-medium">Trang chủ</span>
@@ -31,6 +31,9 @@ export default function BottomNav() {
                 <User className="w-5 h-5" />
                 <span className="text-[10px] font-medium">Người dùng</span>
             </Link>
+
+            {/* Pseudo-element hack to cover rubber-band bounce gap at the bottom on Safari/mobile */}
+            <div className="absolute top-full left-0 right-0 h-[50vh] bg-surface-container-lowest/95 backdrop-blur-lg -z-10" />
         </div>
     );
 }

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { getMoviesByCategory, getMoviesByList, getMoviesByCountry, getCategories, getCountries } from '@/services/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
-import { ChevronDown, X, SlidersHorizontal, Film, Shuffle, Check, RotateCcw } from 'lucide-react';
+import { ChevronDown, X, SlidersHorizontal, Film, Shuffle, Check, RotateCcw, Search } from 'lucide-react';
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,7 +147,7 @@ function FilterPill({ label, active, onClear, onClose, children }) {
     const pillRef = useRef(null);
 
     const latestOnClose = useRef(onClose);
-    latestOnClose.current = onClose; // Always keep the latest callback without firing re-renders
+    useEffect(() => { latestOnClose.current = onClose; }, [onClose]);
 
     const openDropdown = () => {
         if (pillRef.current) {
@@ -387,6 +387,7 @@ export default function FilterPage() {
         // Skip initial mount render if no specific filters are applied
         if (!searched && activeCount === 0) return;
         applyFiltersWithYear(yearMin, yearMax, 1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedType, selectedCat, selectedCountry, sortBy, yearMin, yearMax]);
 
 

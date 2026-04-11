@@ -44,6 +44,7 @@ export default function Home() {
     useEffect(() => {
         if (!movies.length) return;
         const pool = movies.slice(0, Math.min(20, movies.length));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTopMovies([...pool].sort(() => Math.random() - 0.5).slice(0, 10));
     }, [movies]);
 

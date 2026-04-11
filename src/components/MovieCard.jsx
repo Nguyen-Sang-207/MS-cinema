@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function MovieCard({ movie, isContinueWatching, isGrid }) {
     const getImageUrl = (path) => {
-        if (!path) return 'https://via.placeholder.com/400x600?text=No+Image';
+        if (!path) return null;
         const url = path.startsWith('http') ? path : `https://img.ophim.live/uploads/movies/${path}`;
         const cleanUrl = url.replace(/^https?:\/\//, '');
         // Keep high quality for main cards to avoid making the site look bad
@@ -14,7 +14,9 @@ export default function MovieCard({ movie, isContinueWatching, isGrid }) {
     };
 
     // Card is portrait — always prefer thumb_url (vertical ratio)
-    const cardImg = getImageUrl(movie.thumb_url || movie.poster_url);
+    const cardImg = movie.thumb_url || movie.poster_url
+        ? getImageUrl(movie.thumb_url || movie.poster_url)
+        : null;
 
     const layoutClasses = isGrid
         ? "w-full"
@@ -28,15 +30,21 @@ export default function MovieCard({ movie, isContinueWatching, isGrid }) {
                     className="block w-full h-full overflow-hidden rounded-lg relative"
                     draggable={false}
                 >
-                    <Image
-                        src={cardImg}
-                        alt={movie.name}
-                        fill
-                        sizes="(max-width: 768px) 160px, 210px"
-                        className="object-cover transition-transform duration-700 group-hover/card:scale-110 pointer-events-none"
-                        referrerPolicy="no-referrer"
-                        draggable={false}
-                    />
+                    {cardImg ? (
+                        <Image
+                            src={cardImg}
+                            alt={movie.name}
+                            fill
+                            sizes="(max-width: 768px) 160px, 210px"
+                            className="object-cover transition-transform duration-700 group-hover/card:scale-110 pointer-events-none"
+                            unoptimized
+                            draggable={false}
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-surface-container-highest flex items-center justify-center">
+                            <span className="text-white/20 text-xs font-bold uppercase tracking-widest">No Image</span>
+                        </div>
+                    )}
                 </Link>
 
                 {/* Top Actions - Bookmark/Heart - Now subtle glass buttons */}

@@ -34,18 +34,19 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('movie_unlocked') === 'true';
+    }
+    return false;
+  });
   const [loading, setLoading] = useState(true);
 
   // Mã bí mật đã được đổi
   const SECRET_CODE = 'AnhSangDepTrai';
 
   useEffect(() => {
-    // Phục hồi trạng thái mã bảo vệ khỏi localStorage
-    const unlockedStat = localStorage.getItem('movie_unlocked');
-    if (unlockedStat === 'true') {
-      setIsUnlocked(true);
-    }
+    // Lắng nghe trạng thái đăng nhập thực tế từ Firebase
 
     // Lắng nghe trạng thái đăng nhập thực tế từ Firebase
     const unsubscribe = onAuthStateChanged(auth, (user) => {

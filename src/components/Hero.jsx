@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Image from 'next/image';
 import { Play, Clapperboard } from 'lucide-react';
 import Link from 'next/link';
 
@@ -7,7 +8,7 @@ export default function Hero({ movie }) {
     if (!movie) return null;
 
     const getImageUrl = (path) => {
-        if (!path) return 'https://via.placeholder.com/1280x720?text=No+Image';
+        if (!path) return '';
         const url = path.startsWith('http') ? path : `https://img.ophim.live/uploads/movies/${path}`;
         const cleanUrl = url.replace(/^https?:\/\//, '');
         // Fast globally distributed Photon CDN for large hero banners
@@ -19,23 +20,27 @@ export default function Hero({ movie }) {
             {/* Background Images — Split by device to prevent cropping */}
             <div className="absolute inset-0 w-full h-full z-0 bg-black">
                 {/* Mobile: Vertical (Portrait) */}
-                <img
-                    src={getImageUrl(movie.thumb_url || movie.poster_url)}
-                    alt={movie.name}
-                    className="w-full h-full object-cover object-top sm:hidden"
-                    referrerPolicy="no-referrer"
-                    fetchPriority="high"
-                    decoding="sync"
-                />
+                {getImageUrl(movie.thumb_url || movie.poster_url) && (
+                    <Image
+                        src={getImageUrl(movie.thumb_url || movie.poster_url)}
+                        alt={movie.name}
+                        fill
+                        className="object-cover object-top sm:hidden"
+                        priority
+                        unoptimized
+                    />
+                )}
                 {/* Desktop: Horizontal (Landscape) */}
-                <img
-                    src={getImageUrl(movie.poster_url || movie.thumb_url)}
-                    alt={movie.name}
-                    className="w-full h-full object-cover object-top hidden sm:block"
-                    referrerPolicy="no-referrer"
-                    fetchPriority="high"
-                    decoding="sync"
-                />
+                {getImageUrl(movie.poster_url || movie.thumb_url) && (
+                    <Image
+                        src={getImageUrl(movie.poster_url || movie.thumb_url)}
+                        alt={movie.name}
+                        fill
+                        className="object-cover object-top hidden sm:block"
+                        priority
+                        unoptimized
+                    />
+                )}
                 <div className="absolute inset-0 hero-gradient"></div>
                 <div className="absolute inset-0 side-gradient"></div>
                 <div className="absolute inset-0 hero-vignette"></div>

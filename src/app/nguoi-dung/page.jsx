@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { User as UserIcon, LogOut, ShieldCheck, Mail, Key } from 'lucide-react';
 
@@ -44,7 +45,7 @@ export default function User() {
             <div className="flex flex-col items-center border-b border-white/5 pb-6 mb-6">
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 flex items-center justify-center border border-white/10 shadow-md ring-4 ring-black/20">
                 {currentUser.photoURL ? (
-                  <img src={currentUser.photoURL} alt={currentUser.displayName} className="w-full h-full object-cover" />
+                  <Image src={currentUser.photoURL} alt={currentUser.displayName} className="w-full h-full object-cover" width={96} height={96} unoptimized />
                 ) : (
                   <UserIcon className="w-10 h-10 text-white/50" />
                 )}

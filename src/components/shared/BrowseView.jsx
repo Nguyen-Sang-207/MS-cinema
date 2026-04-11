@@ -307,8 +307,8 @@ function ScrollableList({ items, value, onChange }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Browse Page
 // ─────────────────────────────────────────────────────────────────────────────
-export default function Browse({ type: typeProp }) {
-    const { slug, type: typeParam } = {} /* TODO parse slug */;
+export default function Browse({ type: typeProp, paramsSlug }) {
+    const slug = paramsSlug || '';
     const location = usePathname();
 
     const [movies, setMovies] = useState([]);
@@ -502,7 +502,7 @@ export default function Browse({ type: typeProp }) {
         })();
 
         return () => { cancelled = true; };
-    }, [slug, normalType, page, config.slug, config.label, config.fetcher, categories, countries, selectedType, selectedCat, selectedCountry, sortBy, yearMin, yearMax]);
+    }, [slug, normalType, page, config, config.slug, config.label, config.fetcher, categories, countries, selectedType, selectedCat, selectedCountry, sortBy, yearMin, yearMax]);
 
 
 

@@ -517,6 +517,7 @@ export default function SearchPage() {
                 return next;
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedType, selectedCat, selectedCountry, yearMin, yearMax, sortBy]);
 
 
