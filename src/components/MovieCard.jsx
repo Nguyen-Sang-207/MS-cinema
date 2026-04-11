@@ -52,6 +52,7 @@ export default function MovieCard({ movie, isContinueWatching, isGrid }) {
                     <button
                         className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-primary text-white transition-all backdrop-blur-md border border-white/10 shadow-lg hover:scale-110 active:scale-95"
                         title="Thêm vào yêu thích"
+                        aria-label="Thêm vào yêu thích"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                     >
                         <Heart className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -59,6 +60,7 @@ export default function MovieCard({ movie, isContinueWatching, isGrid }) {
                     <button
                         className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-black/40 hover:bg-primary text-white transition-all backdrop-blur-md border border-white/10 shadow-lg hover:scale-110 active:scale-95"
                         title="Lưu phim"
+                        aria-label="Lưu phim"
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                     >
                         <Bookmark className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -79,9 +81,9 @@ export default function MovieCard({ movie, isContinueWatching, isGrid }) {
 
                     {/* Artistic Original Name - Lowered to the very bottom */}
                     <div className="absolute inset-x-0 bottom-2 z-10 px-3 group-hover/card:opacity-0 transition-opacity duration-300 pointer-events-none">
-                        <h4 className="text-[11px] md:text-[13px] font-medium text-white/90 truncate drop-shadow-md tracking-[0.05em] uppercase italic text-left">
+                        <p className="text-[11px] md:text-[13px] font-medium text-white/90 truncate drop-shadow-md tracking-[0.05em] uppercase italic text-left">
                             {movie.origin_name}
-                        </h4>
+                        </p>
                     </div>
 
                     {/* Large "Watch" Button - absolute to center bottom */}

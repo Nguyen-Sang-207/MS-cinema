@@ -284,6 +284,7 @@ export default function TopNav() {
                     {/* Fixed Icon that NEVER Moves */}
                     <button
                         type="button"
+                        aria-label="Tìm kiếm"
                         onClick={(e) => {
                             if (!isSearchOpen) {
                                 setIsSearchOpen(true);
@@ -341,7 +342,7 @@ export default function TopNav() {
                     </AnimatePresence>
                 </div>
 
-                <button className="relative p-2 text-on-surface hover:text-primary transition-colors drop-shadow-md">
+                <button aria-label="Thông báo" className="relative p-2 text-on-surface hover:text-primary transition-colors drop-shadow-md">
                     <Bell className="w-5 h-5 md:w-6 md:h-6" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-surface-container-lowest" />
                 </button>
