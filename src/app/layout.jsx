@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import { AuthProvider } from '../contexts/AuthContext';
 import TopNav from '../components/TopNav';
 import BottomNav from '../components/BottomNav';
@@ -12,6 +13,36 @@ export default function RootLayout({ children }) {
   return (
     <html lang="vi">
       <body className="flex flex-col min-h-screen bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary pb-16 md:pb-0 overflow-x-hidden antialiased">
+        <div id="google_translate_element" style={{ display: 'none' }}></div>
+        <Script id="google-translate-init" strategy="beforeInteractive">
+          {`
+            (function() {
+              try {
+                var lang = navigator.language || navigator.userLanguage;
+                // Nếu người dùng không sử dụng tiếng Việt (người nước ngoài)
+                if (!lang.toLowerCase().includes('vi')) {
+                  // Chỉ cài đặt cookie dịch sang tiếng Anh nếu chưa có
+                  if (document.cookie.indexOf('googtrans') === -1) {
+                    document.cookie = 'googtrans=/vi/en; path=/';
+                    document.cookie = 'googtrans=/vi/en; domain=.' + window.location.hostname + '; path=/';
+                  }
+                }
+              } catch(e) {}
+            })();
+            
+            window.googleTranslateElementInit = function() {
+              new google.translate.TranslateElement({
+                pageLanguage: 'vi',
+                autoDisplay: false
+              }, 'google_translate_element');
+            };
+          `}
+        </Script>
+        <Script 
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="lazyOnload"
+        />
+        
         <AuthProvider>
           <TopNav />
           <BottomNav />

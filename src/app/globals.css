@@ -453,3 +453,12 @@
     justify-content: center;
   }
 }
+
+/* =========================================================
+   Google Translate Invisible Mode - Không thay đổi giao diện
+   ========================================================= */
+body { top: 0 !important; }
+.skiptranslate, iframe.skiptranslate { display: none !important; margin: 0 !important; }
+#goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+#google_translate_element { display: none !important; }
