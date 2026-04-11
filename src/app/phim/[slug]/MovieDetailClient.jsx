@@ -88,6 +88,8 @@ export default function MovieDetail({ params }) {
     useEffect(() => {
         window.scrollTo(0, 0);
         const shouldAutoPlay = new URLSearchParams('').get('play') === 'true';
+        // Reset all states when navigating to a new movie — intentional synchronous reset
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMovie(null); setError(null);
         setIsPlaying(false); setCurrentEpisode(null);
         setCurrentServerIndex(0);

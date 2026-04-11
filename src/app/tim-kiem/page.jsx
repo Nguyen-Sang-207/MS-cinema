@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { searchMovies, getCategories, getCountries } from '@/services/api';
 import MovieCard from '@/components/MovieCard';
 import Pagination from '@/components/Pagination';
@@ -314,11 +314,24 @@ function MobileFilterSection({ title, children }) {
 // Main Page
 // ─────────────────────────────────────────────────────────────────────────────
 export default function SearchPage() {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
     const keyword = searchParams.get('q') || '';
     const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
-    const [movies, setMovies] = useState([]);
+    // Helper to update search params via router
+    const setSearchParams = (paramsObj) => {
+        const next = new URLSearchParams(searchParams.toString());
+        if (typeof paramsObj === 'function') {
+            const result = paramsObj(next);
+            router.push(`${pathname}?${result.toString()}`);
+        } else {
+            const fresh = new URLSearchParams();
+            Object.entries(paramsObj).forEach(([k, v]) => fresh.set(k, v));
+            router.push(`${pathname}?${fresh.toString()}`);
+        }
+    };    const [movies, setMovies] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
