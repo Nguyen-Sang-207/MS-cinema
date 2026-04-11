@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getMovieDetail, searchMovies, getMoviesByCategory } from '@/services/api';
@@ -77,6 +77,7 @@ export default function MovieDetail({ params }) {
     const [newComment, setNewComment] = useState('');
     const [userRating, setUserRating] = useState(0);
     const [commentsOpen, setCommentsOpen] = useState(true);
+    const [iframeLoaded, setIframeLoaded] = useState(false);
     const [replyingTo, setReplyingTo] = useState(null);
     const [expandedReplies, setExpandedReplies] = useState({});
     const [visibleCount, setVisibleCount] = useState(5);
@@ -85,9 +86,8 @@ export default function MovieDetail({ params }) {
 
     // ── Fetch data ────────────────────────────────────────────────────────────
     useEffect(() => {
-        // Always snap to top immediately on navigation (no smooth = no visual slide)
         window.scrollTo(0, 0);
-        const shouldAutoPlay = new URLSearchParams('' /* TODO: search params */).get('play') === 'true';
+        const shouldAutoPlay = new URLSearchParams('').get('play') === 'true';
         setMovie(null); setError(null);
         setIsPlaying(false); setCurrentEpisode(null);
         setCurrentServerIndex(0);
@@ -106,40 +106,46 @@ export default function MovieDetail({ params }) {
                 setMovie(m);
                 if (m.episodes[0]?.server_data?.[0]) {
                     setCurrentEpisode(m.episodes[0].server_data[0]);
-                    // Auto-play: just set state, scroll is handled by a separate useEffect
                     if (shouldAutoPlay) setIsPlaying(true);
                 }
+                // ── Unblock UI as soon as movie data is ready ──────────────
+                setLoading(false);
 
-                // Related movies — search by VN name keyword
+                // ── Fetch secondary data in background (non-blocking) ──────
+                const firstCatSlug = m.category?.[0]?.slug;
                 const vnKeyword = m.name.split(':')[0].split('(')[0].trim();
-                const rel = await searchMovies(vnKeyword, 16);
+
+                // Run all secondary fetches in parallel, they don't block the player
+                const [rel, suggested] = await Promise.all([
+                    searchMovies(vnKeyword, 16).catch(() => null),
+                    firstCatSlug ? getMoviesByCategory(firstCatSlug).catch(() => null) : Promise.resolve(null),
+                ]);
+
+                // Related movies
                 const relItems = rel?.data?.items || rel?.items || [];
                 const filtered = relItems.filter(r => r.slug !== slug);
                 if (filtered.length < 3 && m.origin_name) {
                     const kw2 = m.origin_name.split(' ').slice(0, 2).join(' ');
-                    const rel2 = await searchMovies(kw2, 16);
-                    const items2 = rel2?.data?.items || rel2?.items || [];
-                    const combined = [
-                        ...filtered,
-                        ...items2.filter(r => r.slug !== slug && !filtered.find(f => f.slug === r.slug))
-                    ];
-                    setRelatedMovies(combined.slice(0, 12));
+                    searchMovies(kw2, 16).then(rel2 => {
+                        const items2 = rel2?.data?.items || rel2?.items || [];
+                        const combined = [
+                            ...filtered,
+                            ...items2.filter(r => r.slug !== slug && !filtered.find(f => f.slug === r.slug))
+                        ];
+                        setRelatedMovies(combined.slice(0, 12));
+                    }).catch(() => {});
                 } else {
                     setRelatedMovies(filtered.slice(0, 12));
                 }
 
-                // Suggested movies — same genre
-                const firstCatSlug = m.category?.[0]?.slug;
-                if (firstCatSlug) {
-                    const suggested = await getMoviesByCategory(firstCatSlug);
-                    // API now returns { items, params } — extract .items
+                // Suggested movies
+                if (suggested) {
                     const suggestedItems = suggested?.items || suggested || [];
                     setSuggestedMovies(suggestedItems.filter(s => s.slug !== slug).slice(0, 18));
                 }
             } catch (err) {
                 console.error('MovieDetail error:', err);
                 setError('Đã xảy ra lỗi khi tải phim');
-            } finally {
                 setLoading(false);
             }
         })();
@@ -217,7 +223,9 @@ export default function MovieDetail({ params }) {
     }, [movie, isPlaying, currentEpisode]);
 
     // ── Handlers ─────────────────────────────────────────────────────────────
+    // Reset iframe loaded state whenever episode changes
     const watchEpisode = (ep) => {
+        setIframeLoaded(false);
         setCurrentEpisode(ep);
         setIsPlaying(true);
         requestAnimationFrame(() => {
@@ -406,15 +414,29 @@ export default function MovieDetail({ params }) {
                     ) : (
                     /* ── VIDEO PLAYER ── */
                     <div className="relative w-full pt-16 md:pt-20 bg-black flex flex-col items-center justify-center min-h-screen">
-                        <div className="w-full md:w-[85%] lg:w-[75%] max-w-[1200px] aspect-video md:mt-4 md:rounded-xl overflow-hidden shadow-2xl bg-[#0a0a0a]">
+                        <div className="relative w-full md:w-[85%] lg:w-[75%] max-w-[1200px] aspect-video md:mt-4 md:rounded-xl overflow-hidden shadow-2xl bg-[#0a0a0a]">
+                            {/* Loading spinner — visible until iframe fires onLoad */}
+                            {!iframeLoaded && (
+                                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black gap-3">
+                                    <div className="w-10 h-10 border-2 border-white/10 border-t-primary rounded-full animate-spin" />
+                                    <span className="text-white/30 text-xs font-medium">Đang kết nối nguồn phim...</span>
+                                </div>
+                            )}
+                            {currentEpisode?.link_embed ? (
                             <iframe
-                                key={currentEpisode?.link_embed}
-                                src={currentEpisode?.link_embed}
+                                key={currentEpisode.link_embed}
+                                src={currentEpisode.link_embed}
                                 className="w-full h-full border-0"
                                 allowFullScreen
                                 allow="autoplay; fullscreen"
                                 title="Movie Player"
+                                onLoad={() => setIframeLoaded(true)}
                             />
+                            ) : (
+                            <div className="w-full h-full flex items-center justify-center text-white/30 text-sm">
+                                Đang tải nguồn phim...
+                            </div>
+                            )}
                         </div>
                         {/* Info bar */}
                         <div className="flex items-center justify-between w-full md:w-[85%] lg:w-[75%] max-w-[1200px] px-4 md:px-6 py-3 bg-black/60 md:bg-transparent md:pt-4 border-b border-white/5 md:border-none">

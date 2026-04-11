@@ -12,6 +12,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="vi">
+      <head>
+        {/* DNS prefetch & preconnect for video embed servers and image CDN */}
+        <link rel="dns-prefetch" href="https://player.phimapi.com" />
+        <link rel="preconnect" href="https://player.phimapi.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ophim1.com" />
+        <link rel="preconnect" href="https://ophim1.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://i0.wp.com" />
+        <link rel="preconnect" href="https://i0.wp.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://img.ophim.live" />
+        <link rel="preconnect" href="https://img.ophim.live" crossOrigin="anonymous" />
+      </head>
       <body className="flex flex-col min-h-screen bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary pb-16 md:pb-0 overflow-x-hidden antialiased">
         <div id="google_translate_element" style={{ display: 'none' }}></div>
         <Script id="google-translate-init" strategy="beforeInteractive">
