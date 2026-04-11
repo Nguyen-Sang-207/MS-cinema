@@ -9,6 +9,10 @@ export const metadata = {
   description: 'Trải nghiệm xem phim với giao diện tuyệt đẹp',
 };
 
+export const viewport = {
+  themeColor: '#0e0e0e',
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="vi">
