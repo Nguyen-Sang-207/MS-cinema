@@ -21,7 +21,7 @@ const Header = () => {
             <div className="container header-content">
                 <Link href="/" className="logo">
                     <Film style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                    OPhim
+                    MS Cinema
                 </Link>
 
                 <nav className="nav-links">

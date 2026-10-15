@@ -65,6 +65,20 @@ export default function Home() {
         );
     }
 
+    if (!loading && movies.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] pt-24 px-4 text-center">
+                <p className="text-white/60 mb-4 text-base">Không thể tải danh sách phim lúc này. Vui lòng kiểm tra lại kết nối mạng hoặc thử lại.</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary/80 transition-colors"
+                >
+                    Tải lại trang
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="w-full">
             {/* Auto-sliding Crossfade Hero Wrapper */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getMovieDetail } from '@/services/api';
+import { getMovieDetail, getOptimizedImageUrl } from '@/services/api';
 import MovieDetailClient from './MovieDetailClient';
 
 // Server Component để cung cấp SEO Dynamic Metadata
@@ -9,20 +9,12 @@ export async function generateMetadata({ params }) {
     try {
         const data = await getMovieDetail(slug);
         if (!data || !data.movie) {
-            return { title: 'Không tìm thấy phim - Movie Web' };
+            return { title: 'Không tìm thấy phim - MS Cinema' };
         }
 
         const movie = data.movie;
-        const title = `${movie.name} - Movie Web`;
-        // Helper resize ảnh như ở phía Client
-        const imgUrl = (p, w = 1200) => {
-            if (!p) return '/placeholder.jpg';
-            const baseUrl = p.startsWith('http') ? p : `https://img.ophim.live/uploads/movies/${p}`;
-            const cleanUrl = baseUrl.replace(/^https?:\/\//, '');
-            return `https://i0.wp.com/${cleanUrl}?w=${w}&quality=80`;
-        };
-
-        const imageUrl = imgUrl(movie.thumb_url || movie.poster_url);
+        const title = `${movie.name} - MS Cinema`;
+        const imageUrl = getOptimizedImageUrl(movie.thumb_url || movie.poster_url, 1200, null, 80) || '/placeholder.jpg';
         
         let plainTextDesc = `Xem phim ${movie.name} vietsub chất lượng cao.`;
         if (movie.content) {

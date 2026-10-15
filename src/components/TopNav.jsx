@@ -5,7 +5,7 @@ import { Search, Bell, ChevronDown, Loader2, User as UserIcon } from 'lucide-rea
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import { searchMovies, getCategories, getCountries } from '../services/api';
+import { searchMovies, getCategories, getCountries, getOptimizedImageUrl } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 // ── Country slug → ISO code mapping ──────────────────────────────────────────
@@ -205,7 +205,7 @@ export default function TopNav() {
         }
     };
 
-    const getImgUrl = (p) => p?.startsWith('http') ? p : `https://img.ophim.live/uploads/movies/${p}`;
+    const getImgUrl = (p) => getOptimizedImageUrl(p, 96, 64, 60);
 
     return (
         <header className="fixed top-0 right-0 left-0 h-16 md:h-20 z-50 px-4 md:px-8">
@@ -322,13 +322,13 @@ export default function TopNav() {
                                                 className="flex items-center gap-3 p-3 hover:bg-white/8 transition-colors border-b border-white/5 last:border-0"
                                             >
                                                 <Image
-                                                src={`https://i0.wp.com/${getImgUrl(movie.thumb_url).replace(/^https?:\/\//, '')}?resize=96,64&quality=60`}
-                                                className="w-12 h-8 object-cover rounded-md flex-none bg-surface-container-high"
-                                                alt={movie.name}
-                                                width={48}
-                                                height={32}
-                                                unoptimized
-                                            />
+                                                    src={getImgUrl(movie.thumb_url || movie.poster_url)}
+                                                    className="w-12 h-8 object-cover rounded-md flex-none bg-surface-container-high"
+                                                    alt={movie.name}
+                                                    width={48}
+                                                    height={32}
+                                                    unoptimized
+                                                />
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-white font-semibold text-sm truncate">{movie.name}</p>
                                                     <p className="text-white/40 text-xs truncate">{movie.origin_name} · {movie.year}</p>

@@ -3,16 +3,14 @@ import React from 'react';
 import Image from 'next/image';
 import { Play, Clapperboard } from 'lucide-react';
 import Link from 'next/link';
+import { getOptimizedImageUrl } from '@/services/api';
 
 export default function Hero({ movie }) {
     if (!movie) return null;
 
     const getImageUrl = (path) => {
         if (!path) return '';
-        const url = path.startsWith('http') ? path : `https://img.ophim.live/uploads/movies/${path}`;
-        const cleanUrl = url.replace(/^https?:\/\//, '');
-        // Fast globally distributed Photon CDN for large hero banners
-        return `https://i0.wp.com/${cleanUrl}?w=1280&quality=80`;
+        return getOptimizedImageUrl(path, 1280, null, 80);
     };
 
     return (

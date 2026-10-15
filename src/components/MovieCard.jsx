@@ -3,19 +3,12 @@ import React from 'react';
 import { Play, Heart, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getOptimizedImageUrl } from '@/services/api';
 
 export default function MovieCard({ movie, isContinueWatching, isGrid }) {
-    const getImageUrl = (path) => {
-        if (!path) return null;
-        const url = path.startsWith('http') ? path : `https://img.ophim.live/uploads/movies/${path}`;
-        const cleanUrl = url.replace(/^https?:\/\//, '');
-        // Keep high quality for main cards to avoid making the site look bad
-        return `https://i0.wp.com/${cleanUrl}?resize=400,600&quality=85`;
-    };
-
     // Card is portrait — always prefer thumb_url (vertical ratio)
     const cardImg = movie.thumb_url || movie.poster_url
-        ? getImageUrl(movie.thumb_url || movie.poster_url)
+        ? getOptimizedImageUrl(movie.thumb_url || movie.poster_url, 400, 600, 85)
         : null;
 
     const layoutClasses = isGrid

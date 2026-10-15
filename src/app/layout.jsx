@@ -15,20 +15,23 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <head>
         {/* DNS prefetch & preconnect for video embed servers and image CDN */}
         <link rel="dns-prefetch" href="https://player.phimapi.com" />
         <link rel="preconnect" href="https://player.phimapi.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://ophim1.com" />
-        <link rel="preconnect" href="https://ophim1.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://phimapi.com" />
+        <link rel="preconnect" href="https://phimapi.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://i0.wp.com" />
         <link rel="preconnect" href="https://i0.wp.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://img.ophim.live" />
-        <link rel="preconnect" href="https://img.ophim.live" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://phimimg.com" />
+        <link rel="preconnect" href="https://phimimg.com" crossOrigin="anonymous" />
       </head>
-      <body className="flex flex-col min-h-screen bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary pb-16 md:pb-0 overflow-x-hidden antialiased">
-        <div id="google_translate_element" style={{ display: 'none' }}></div>
+      <body
+        className="flex flex-col min-h-screen bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary pb-16 md:pb-0 overflow-x-hidden antialiased"
+        suppressHydrationWarning
+      >
+        <div id="google_translate_element" style={{ display: 'none' }} suppressHydrationWarning></div>
         <Script src="/google-translate-init.js" strategy="beforeInteractive" />
         <Script 
           src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"

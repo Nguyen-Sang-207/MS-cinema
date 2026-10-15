@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { getMovieDetail, searchMovies, getMoviesByCategory } from '@/services/api';
+import { getMovieDetail, searchMovies, getMoviesByCategory, getOptimizedImageUrl } from '@/services/api';
 import {
     Play, Clapperboard, X, Star, Clock, Globe,
     ChevronDown, ChevronUp, MessageSquare, Film, Tv, Sparkles, Lock, Key, Unlock, LogIn, Heart, MoreHorizontal, MessageCircle
@@ -33,12 +33,8 @@ const formatTimeAgo = (timeValue) => {
 
 const imgUrl = (p, w = 1280) => {
     if (!p) return '/placeholder.jpg';
-    const baseUrl = p.startsWith('http') ? p : `https://img.ophim.live/uploads/movies/${p}`;
-    const cleanUrl = baseUrl.replace(/^https?:\/\//, '');
-
-    // Optimize specifically for thumbnails vs large banners
     const quality = w < 1200 ? 70 : 80;
-    return `https://i0.wp.com/${cleanUrl}?w=${w}&quality=${quality}`;
+    return getOptimizedImageUrl(p, w, null, quality) || '/placeholder.jpg';
 };
 
 import StarRating from '@/components/movie-detail/StarRating';
